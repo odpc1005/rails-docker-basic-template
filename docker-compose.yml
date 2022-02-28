@@ -1,0 +1,35 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+        - "3030:3000"
+    env_file:
+      - .env/development/database
+      - .env/development/web
+    volumes:
+      - ./myapp:/usr/src/app
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=webpack-dev-server
+  webpack-dev-server:
+    build: .
+    command: ./bin/webpack-dev-server
+    ports:
+      - 3035:3035
+    volumes:
+      - ./myapp:/usr/src/app
+    env_file:
+      - .env/development/database
+      - .env/development/web
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+  redis:
+    image: redis
+  database:
+    image: postgres
+    env_file:
+      - .env/development/database
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:

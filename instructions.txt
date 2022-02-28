@@ -1,0 +1,37 @@
+# first install docker on your system
+
+# run this command at the root of the dir that will contain the app
+docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3 bash
+
+# inside the container create the app folder
+cd /usr/src
+mkdir app
+cd app
+gem install rails -v 7
+rails new name_of_app --api --skip-bundle --database=postgresql
+# exit the container
+# copy the dockerfile and docker-compose
+# create hidden dir .env/development/ and files database and web with the following contents
+# database file
+POSTGRES_USER=user
+POSTGRES_PASSWORD=development-password
+POSTGRES_DB=name_of_app_development
+#web file
+DATABASE_HOST=database
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# create a docusign developer account (for free)
+https://developers.docusign.com/
+
