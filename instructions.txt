@@ -35,19 +35,14 @@ POSTGRES_DB=name_of_app_development
 # 'web' file
 DATABASE_HOST=database
 
+# now you can build the container
+docker-compose build web
+# finish the instalation of webpack and react
+docker-compose run web rails webpacker:install
+
+# test the app working, need to check the database service did not start.
+docker-compose up
 
 
 
-
-
-
-
-
-
-
-
-
-
-# create a docusign developer account (for free)
-https://developers.docusign.com/
 
