@@ -7,8 +7,11 @@ docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3 bash
 cd /usr/src
 mkdir app
 cd app
-gem install rails -v 7
+gem install rails -v 6.1.4.6
+# for only an api app
 rails new name_of_app --api --skip-bundle --database=postgresql
+# for a full rails app that uses webpacker and react
+rails new name_of_app --skip-bundle --database=postgresql
 # exit the container
 # copy the dockerfile and docker-compose
 # create hidden dir .env/development/ and files database and web with the following contents
