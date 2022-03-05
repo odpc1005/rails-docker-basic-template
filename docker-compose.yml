@@ -3,12 +3,12 @@ services:
   web:
     build: .
     ports:
-        - "3030:3000"
+        - "3000:3000"
     env_file:
       - .env/development/database
       - .env/development/web
     volumes:
-      - ./myapp:/usr/src/app
+      - .:/usr/src/app
     environment:
       - WEBPACKER_DEV_SERVER_HOST=webpack-dev-server
   webpack-dev-server:
@@ -17,7 +17,7 @@ services:
     ports:
       - 3035:3035
     volumes:
-      - ./myapp:/usr/src/app
+      - .:/usr/src/app
     env_file:
       - .env/development/database
       - .env/development/web
