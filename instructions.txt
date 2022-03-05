@@ -3,23 +3,36 @@
 # run this command at the root of the dir that will contain the app
 docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3 bash
 
-# inside the container create the app folder
-cd /usr/src
-mkdir app
-cd app
+# inside the container navigate to the app folder
+cd /usr/src/app
+
 gem install rails -v 6.1.4.6
+#
 # for only an api app
 rails new name_of_app --api --skip-bundle --database=postgresql
 # for a full rails app that uses webpacker and react
-rails new name_of_app --skip-bundle --database=postgresql
+rails new name_of_app --webpack=react --skip-bundle --database=postgresql 
+# keep in mind that to complete setup, you must run `bundle install` followed by `rails webpacker:install`
 # exit the container
-# copy the dockerfile and docker-compose
+# copy the dockerfile and docker-compose into the folder of the app 'name_of_app'
 # create hidden dir .env/development/ and files database and web with the following contents
-# database file
+mkdir .env
+cd .env
+mkdir development
+cd development
+touch database
+touch web
+echo 'POSTGRES_USER=user' >> database
+echo 'POSTGRES_PASSWORD=development-password' >> database
+echo 'POSTGRES_DB=name_of_app_development' >> database
+
+echo 'DATABASE_HOST=database' >> web
+
+# 'database' file
 POSTGRES_USER=user
 POSTGRES_PASSWORD=development-password
 POSTGRES_DB=name_of_app_development
-#web file
+# 'web' file
 DATABASE_HOST=database
 
 
