@@ -39,6 +39,33 @@ DATABASE_HOST=database
 docker-compose build web
 # finish the instalation of webpack and react
 docker-compose run web rails webpacker:install
+# edit the config/database.yml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch('DATABASE_HOST') %>
+  username: <%= ENV.fetch('POSTGRES_USER') %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
+  database: <%= ENV.fetch('POSTGRES_DB') %>
+  pool: 5
+  variables:
+    statement_timeout: 5000
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  database: myapp_test
+
+production:
+  <<: *default
+
+# create the database
+docker compose run --rm web rails db:create
+docker compose run --rm web rails db:migrate
+# install react?
+rails webpacker:install:react
 
 # test the app working, need to check the database service did not start.
 docker-compose up
