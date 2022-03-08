@@ -7,12 +7,13 @@ docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3 bash
 cd /usr/src/app
 
 gem install rails -v 6.1.4.6
-#
+# Please change the name_of_app to a proper one
 # for only an api app
 rails new name_of_app --api --skip-bundle --database=postgresql
 # for a full rails app that uses webpacker and react
 rails new name_of_app --webpack=react --skip-bundle --database=postgresql 
 # keep in mind that to complete setup, you must run `bundle install` followed by `rails webpacker:install`
+# once you build an actual image.
 # exit the container
 # copy the dockerfile and docker-compose into the folder of the app 'name_of_app'
 # create hidden dir .env/development/ and files database and web with the following contents
@@ -64,10 +65,10 @@ production:
 # create the database
 docker compose run --rm web rails db:create
 docker compose run --rm web rails db:migrate
-# install react?
+# if you want to install react
 rails webpacker:install:react
 
-# test the app working, need to check the database service did not start.
+# test the app working.
 docker-compose up
 
 
