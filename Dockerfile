@@ -1,9 +1,9 @@
-FROM ruby:2.7.4
+FROM ruby:3
 LABEL maintainer="odpc"
 # allow https sources
 RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends  apt-transport-https
 # install node
-RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends nodejs 
 # latest packages of yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
