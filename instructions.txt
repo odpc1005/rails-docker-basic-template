@@ -1,7 +1,7 @@
 # first install docker on your system
 
-# run this command at the root of the dir that will contain the app
-docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3 bash
+# run this command at the root of the dir that will contain the app. This will allow you to create de directories of a rails app.
+docker run -i -t --rm -v ${PWD}:/usr/src/app ruby:3.0.4 bash
 
 # inside the container navigate to the app folder
 cd /usr/src/app
@@ -9,9 +9,9 @@ cd /usr/src/app
 gem install rails -v 6.1.4.6
 # Please change the name_of_app to a proper one
 # for only an api app
-rails new name_of_app --api --skip-bundle --database=postgresql
+rails new name_of_app --api --database=postgresql
 # for a full rails app that uses webpacker and react
-rails new name_of_app --webpack=react --skip-bundle --database=postgresql 
+rails new name_of_app --webpack=react --database=postgresql 
 # keep in mind that to complete setup, you must run `bundle install` followed by `rails webpacker:install`
 # once you build an actual image.
 # exit the container
@@ -21,6 +21,7 @@ mkdir .env
 cd .env
 mkdir development
 cd development
+
 touch database
 touch web
 echo 'POSTGRES_USER=user' >> database
@@ -29,25 +30,21 @@ echo 'POSTGRES_DB=name_of_app_development' >> database
 
 echo 'DATABASE_HOST=database' >> web
 
-# 'database' file
-POSTGRES_USER=user
-POSTGRES_PASSWORD=development-password
-POSTGRES_DB=name_of_app_development
-# 'web' file
-DATABASE_HOST=database
+# 'database' file should look like
+#POSTGRES_USER=user
+#POSTGRES_PASSWORD=development-password
+#POSTGRES_DB=name_of_app_development
+# 'web' file shoud look like
+#DATABASE_HOST=database
 
-# now you can build the container
-docker-compose build web
-# finish the instalation of webpack and react
-docker-compose run web rails webpacker:install
 # edit the config/database.yml
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV.fetch('DATABASE_HOST') %>
-  username: <%= ENV.fetch('POSTGRES_USER') %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
-  database: <%= ENV.fetch('POSTGRES_DB') %>
+  host: <%= ENV['DATABASE_HOST'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  database: <%= ENV['POSTGRES_DB'] %>
   pool: 5
   variables:
     statement_timeout: 5000
@@ -60,15 +57,33 @@ test:
   database: myapp_test
 
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  url: <%= ENV['DATABASE_URL'] %>
 
+# now you can build the container that you will use for developement.
+docker-compose build web
+# finish the instalation of webpack and react (git is ignoring the node modules, therefore you will need to install them as well)
+docker-compose run web rails webpacker:install
+#
+
+# start the system
+docker-compose up
 # create the database
-docker compose run --rm web rails db:create
-docker compose run --rm web rails db:migrate
+docker-compose exec web bash
+# in the bash terminal
+rails db:create
+rails db:migrate
+# need to reinstall tailwind since the instalation is lost with the previous container, still in the container
+yarn add tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9"
+  append_to_file("app/javascript/packs/application.js", 'import "stylesheets/application"')
+  inject_into_file("./postcss.config.js", "\n    require('tailwindcss')('./app/javascript/stylesheets/tailwind.config.js'),", after: "plugins: [")
+yarn install
 # if you want to install react
 rails webpacker:install:react
 
 # test the app working.
+docker-compose down
 docker-compose up
 
 

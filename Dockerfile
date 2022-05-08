@@ -1,4 +1,4 @@
-FROM ruby:3
+FROM ruby:3.0.4
 LABEL maintainer="odpc"
 # allow https sources
 RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends  apt-transport-https
